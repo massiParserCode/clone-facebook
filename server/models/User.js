@@ -68,6 +68,7 @@ const userSchema = mongoose.Schema(
     verified: {
       type: Boolean,
       required: true,
+      default: false,
     },
     firends: {
       type: Array,
