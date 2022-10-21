@@ -1,4 +1,5 @@
 const { validateEmail, validateLength } = require("../helpers/validation");
+const { generateToken } = require("../helpers/tokens");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 exports.register = async (req, res) => {
@@ -50,12 +51,10 @@ exports.register = async (req, res) => {
 
     const bcryptedPassword = await bcrypt.hash(password, 12);
 
-    console.log(bcryptedPassword);
-    return;
     const user = await new User({
       first_name,
       last_name,
-      password,
+      password: bcryptedPassword,
       username,
       email,
       bYear,
@@ -63,6 +62,13 @@ exports.register = async (req, res) => {
       bDay,
       gender,
     }).save();
+
+    const emailVerificationToken = generateToken(
+      { id: user.id.toString() },
+      "30m"
+    );
+
+    console.log(emailVerificationToken);
 
     res.json(user);
   } catch (error) {
